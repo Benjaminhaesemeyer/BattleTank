@@ -61,6 +61,7 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& HitLocation) const
 	return true;
 }
 
+// converting 2D screen position, to a 3D world direction
 bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const
 {
 	FVector CameraWorldLocation; // to be discarded
@@ -68,15 +69,16 @@ bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& 
 		ScreenLocation.X,
 		ScreenLocation.Y,
 		CameraWorldLocation,
-		LookDirection); // converting 2D screen position, to a 3D coordinate with direction
+		LookDirection); 
 }
 
+// Trace a ray against the world and return the first blocking hit, if true store HitLocation
 bool ATankPlayerController::GetLookVectorHitLocation(FVector LookDirection, FVector& HitLocation) const
 {
 	FHitResult HitResult;
 	auto StartLocation = PlayerCameraManager->GetCameraLocation();
 	auto EndLocation = StartLocation + (LookDirection * LineTraceRange);
-	if (GetWorld()->LineTraceSingleByChannel(
+	if (GetWorld()->LineTraceSingleByChannel( 
 		HitResult,
 		StartLocation,
 		EndLocation,
