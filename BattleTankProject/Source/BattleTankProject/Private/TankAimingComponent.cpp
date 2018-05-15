@@ -22,25 +22,6 @@ void UTankAimingComponent::SetBarrelReference(UStaticMeshComponent* BarrelToSet)
 	 Barrel = BarrelToSet;
 }
 
-
-// Called when the game starts
-void UTankAimingComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-	
-}
-
-
-// Called every frame
-void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)  
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
 void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 {
 	if (!Barrel) { return; } // incase we don't find a barrel component
@@ -48,27 +29,29 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 	FVector OutLaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName ("Projectile"));
 
-	// TODO calculate the out launch velocity
-	if (UGameplayStatics::SuggestProjectileVelocity
-			(
-			this,
-			OutLaunchVelocity,
-			StartLocation,
-			HitLocation,
-			LaunchSpeed,
-			false,
-			0,
-			0,
-			ESuggestProjVelocityTraceOption::DoNotTrace
-			)
-		)
+	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity
+	(
+		this,
+		OutLaunchVelocity,
+		StartLocation,
+		HitLocation,
+		LaunchSpeed,
+		ESuggestProjVelocityTraceOption::DoNotTrace
+	);
+		if(bHaveAimSolution)
 	{
-		auto BarrelLocation = Barrel->GetComponentLocation().ToString();
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal(); // calculated launch velocity output set to aim direction
-		UE_LOG(LogTemp, Warning, TEXT("Barrel: %s is Aiming at %s"), *OutLaunchVelocity.ToString(), *AimDirection.ToString());
-
-		//UE_LOG(LogTemp, Warning, TEXT("HitLocation is %s and Start location is "), *HitLocation.ToString(), *StartLocation.ToString());
+		MoveBarrelTowards(AimDirection);
 	}
 	// if no solution found
+}
+
+void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
+{
+	// work out dif between current barrel rotaion, and aim direction
+
+	// move the barrel the right amount this fram
+
+	// given a max elevation speed, and the frame time
 }
 
